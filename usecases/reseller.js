@@ -3,6 +3,7 @@ module.exports = ({
   validators,
   errorFactory,
   passwordEncrypter,
+  passwordComparator,
   tokenGenerator,
 }) => {
   const create = async ({ name, cpf, email, password }) => {
@@ -40,22 +41,30 @@ module.exports = ({
       throw errorFactory.badData("Por favor informe as credenciais");
     }
 
-    const result = await resellerRepository.findByEmailAndPassword({
-      email,
-      password: await passwordEncrypter(password, 10),
-    });
+    const result = await resellerRepository.getByEmail(email);
 
     if (!result) {
       throw errorFactory.unauthorized("Credenciais inválidas");
     }
 
+    const storedPassword = await resellerRepository.getPassword(result.id);
+
+    const isValidPWD = await passwordComparator(password, storedPassword);
+    if (!isValidPWD) {
+      throw errorFactory.unauthorized("Credenciais inválidas");
+    }
     return {
       token: await tokenGenerator({ id: result.id }),
     };
   };
 
+  const profile = async (id) => {
+      return await resellerRepository.getById(id);
+  };
+
   return {
     create,
     authenticate,
+    profile
   };
 };

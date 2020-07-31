@@ -21,7 +21,8 @@ const resellerUsecase = require("../usecases/reseller")({
   validators,
   errorFactory: Boom,
   passwordEncrypter: (str) => str,
-  tokenGenerator: () => 'token'
+  tokenGenerator: () => 'token',
+  passwordComparator: (p1, p2) => p1 === p2
 });
 
 describe("Authenticate reseller use case", () => {

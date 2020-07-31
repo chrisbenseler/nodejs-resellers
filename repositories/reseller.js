@@ -23,15 +23,29 @@ module.exports = ({ Entity }) => {
     return buildPlainEntity(result);
   };
 
-  const getByEmail = async  (email) => {
+  const getByEmail = async (email) => {
     const result = await Entity.findOne({ email });
     if (!result) return null;
     return buildPlainEntity(result);
   };
 
+  const getById = async (id) => {
+    const result = await Entity.findById(id);
+    if (!result) return null;
+    return buildPlainEntity(result);
+  };
+
+  const getPassword = async (id) => {
+    const result = await Entity.findById(id);
+    if (!result) return null;
+    return result.password;
+  };
+
   return {
     create,
     findByEmailAndPassword,
-    getByEmail
+    getByEmail,
+    getPassword,
+    getById,
   };
 };
