@@ -40,4 +40,9 @@ describe("Cashback service", () => {
     expect(result.count).toBe(0);
   });
 
+  test("get status by CPF", async () => {
+    expect(cashbackService.status("153.509.460-56")).toBe("Aprovado");
+    expect(cashbackService.status("11111")).toBe("Em validação");
+  });
+
 });

@@ -6,7 +6,7 @@ module.exports = ({
   passwordEncrypter,
   passwordComparator,
   tokenGenerator,
-  cashbackService
+  cashbackService,
 }) => {
   const create = async ({ name, cpf, email, password }) => {
     if (!validators.isValidEmail(email)) {
@@ -78,8 +78,8 @@ module.exports = ({
       throw errorFactory.badData("Revendedor não encontrado");
     }
 
-    const status =
-      reseller.cpf === "153.509.460-56" ? "Aprovado" : "Em validação";
+    const status = cashbackService.status(reseller.cpf);
+
     const result = await saleRepository.create({
       code,
       value,
@@ -100,8 +100,6 @@ module.exports = ({
   const listSalesWithCashback = async (id) => {
     return await saleRepository.findByResellerId(id);
   };
-
-  
 
   return {
     create,

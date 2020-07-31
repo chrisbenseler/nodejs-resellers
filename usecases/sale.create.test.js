@@ -20,8 +20,9 @@ const resellerUsecase = require("../usecases/reseller")({
   validators,
   errorFactory: Boom,
   cashbackService: {
-    calculate: () => {}
-  }
+    calculate: () => {},
+    status: (cpf) => (cpf === "153.509.460-56" ? "Aprovado" : "Em validação"),
+  },
 });
 
 describe("Create new sale use case", () => {
@@ -67,7 +68,8 @@ describe("Create new sale use case", () => {
       code: "randomcode",
       value: -10,
     };
-    await expect(resellerUsecase.itemSold(payload)).rejects.toThrow("Valor inválido da transação");
+    await expect(resellerUsecase.itemSold(payload)).rejects.toThrow(
+      "Valor inválido da transação"
+    );
   });
-
 });

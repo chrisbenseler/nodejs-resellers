@@ -1,4 +1,5 @@
 module.exports = ({ saleRepository }) => {
+  const preApprovewdCPFsList = ["153.509.460-56", "111.222.333-44"];
   const calculate = async ({ resellerId, month, year }) => {
     const sales = await saleRepository.findApprovedByPeriod({
       resellerId,
@@ -6,8 +7,9 @@ module.exports = ({ saleRepository }) => {
       year,
     });
 
-    if(sales.length === 0) {
-        return { count: 0, cashbackRatio: null }
+    if (sales.length === 0) {
+      console.log("[Service] cashback", { count: 0, cashbackRatio: null });
+      return { count: 0, cashbackRatio: null };
     }
 
     const sumSales = sales.reduce((acc, curr) => acc + curr.value, 0);
@@ -28,10 +30,16 @@ module.exports = ({ saleRepository }) => {
       });
     }
 
-    return { count: sales.length, cashbackRatio: ratio }
+    const result = { count: sales.length, cashbackRatio: ratio };
+    console.log("[Service] cashback", result);
+    return result;
   };
+
+  const status = (cpf) =>
+    preApprovewdCPFsList.includes(cpf) ? "Aprovado" : "Em validação";
 
   return {
     calculate,
+    status,
   };
 };
