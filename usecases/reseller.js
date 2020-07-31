@@ -3,7 +3,7 @@ module.exports = ({
   validators,
   errorFactory,
   passwordEncrypter,
-  tokenGenerator
+  tokenGenerator,
 }) => {
   const create = async ({ name, cpf, email, password }) => {
     if (!validators.isValidEmail(email)) {
@@ -19,6 +19,12 @@ module.exports = ({
       throw errorFactory.badData(
         "Senha informada não atende os requisitos de segurança"
       );
+    }
+
+    const storedReseller = await resellerRepository.getByEmail(email);
+
+    if (storedReseller) {
+      throw errorFactory.badData("E-mail já em uso");
     }
 
     return await resellerRepository.create({
@@ -39,8 +45,8 @@ module.exports = ({
       password: await passwordEncrypter(password, 10),
     });
 
-    if(!result) {
-        throw errorFactory.unauthorized("Credenciais inválidas")
+    if (!result) {
+      throw errorFactory.unauthorized("Credenciais inválidas");
     }
 
     return {

@@ -5,9 +5,14 @@ const mongoose = require("mongoose");
 const express = require("express");
 const bodyParser = require("body-parser");
 
+const DBHOST = "mongodb://localhost/resellers_dev";
+const PORT = 3000;
+
+mongoose.connect(DBHOST, { useNewUrlParser: true });
+
 const app = express();
 
-app.use(bodyParser.json({ type: "application/*+json" }));
+app.use(bodyParser.json({ type: "application/json" }));
 
 const validators = require("./services/validators");
 
@@ -23,18 +28,16 @@ const resellerUsecase = require("./usecases/reseller")({
   passwordEncrypter: bcrypt.hash,
 });
 
-const PORT = 3000;
-
 app.get("/healthcheck", (req, res) => {
   res.json({ status: "OK " });
 });
 
 app.post("/auth/signup", async (req, res, next) => {
-  console.log("[Controller] auth sign up");
+  console.log("[Controller] auth sign up", req.body);
   const { name, email, cpf, password } = req.body;
-
   try {
-    await resellerUsecase.create({ name, email, cpf, password });
+    const result = await resellerUsecase.create({ name, email, cpf, password });
+    res.status(201).json(result);
   } catch (e) {
     next(e);
   }
@@ -42,7 +45,6 @@ app.post("/auth/signup", async (req, res, next) => {
 
 //error handler
 app.use((err, req, res, next) => {
-  console.log(err);
   if (!err) {
     next();
   }
