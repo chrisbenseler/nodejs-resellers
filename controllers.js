@@ -67,12 +67,26 @@ module.exports = ({ app, resellerUsecase, isAuthenticated }) => {
     }
   });
 
+  app.get("/resellers/:cpf/cashback", async (req, res, next) => {
+    console.log("[Controller] reseller cashback");
+
+    const cpf = req.params.cpf;
+
+    try {
+      const result = await resellerUsecase.cashbackAccumulated(cpf);
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  });
+
   //error handler
   app.use((err, req, res, next) => {
     if (!err) {
       next();
     }
     if (err.isBoom) {
+      console.error(err.output);
       return res.status(err.output.statusCode).json(err.output.payload);
     }
     console.error("Unhandled error", err);

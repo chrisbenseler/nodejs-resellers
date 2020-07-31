@@ -87,7 +87,8 @@ module.exports = ({
       status,
     });
 
-    //calculateCashback é chamado assíncronamente, pois poderia ser um batch que roda de tempos em tempos
+    //calculateCashback is called asynchronously to avoid blocking the event loop; this could be a batch proccess or
+    //use a message broker (PubSub/Redis/etc?) to other service start this process
     cashbackService.calculate({
       resellerId: reseller.id,
       month: result.createdAt.getMonth() + 1,
@@ -101,11 +102,16 @@ module.exports = ({
     return await saleRepository.findByResellerId(id);
   };
 
+  const cashbackAccumulated = async cpf => {
+    return await cashbackService.retrieveAccumulatedFromCPF(cpf);
+  }
+
   return {
     create,
     authenticate,
     profile,
     itemSold,
     listSalesWithCashback,
+    cashbackAccumulated
   };
 };

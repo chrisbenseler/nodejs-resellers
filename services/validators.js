@@ -6,6 +6,7 @@ const validators = {
     return !/\S/.test(str);
   },
   isValidCPF: str => {
+      //must validate format
       return true;
   },
   passwordPattern: str => {

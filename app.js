@@ -2,6 +2,7 @@ const Boom = require("@hapi/boom");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const axios = require("axios");
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -19,6 +20,7 @@ app.use(bodyParser.json({ type: "application/json" }));
 const controllers = require("./controllers");
 
 const validators = require("./services/validators");
+const tokenService = require("./services/token")({ tokenService: jwt, key: PRIVATEKEY });
 
 
 const ResellerEntity = require("./entities/reseller");
@@ -30,16 +32,8 @@ const saleRepository = require("./repositories/sale")({
   Entity: SaleEntity,
 });
 
+const cashbackService = require("./services/cashback")({ saleRepository, httpClient: axios });
 
-
-const cashbackService = require("./services/cashback")({ saleRepository })
-
-const tokenGenerator = async (payload) => {
-  return await jwt.sign(payload, PRIVATEKEY);
-};
-const tokenValidator = async (token) => {
-  return await jwt.verify(token, PRIVATEKEY);
-};
 
 const isAuthenticated = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -51,7 +45,7 @@ const isAuthenticated = async (req, res, next) => {
   const bearerToken = authHeader.split("Bearer ")[1];
 
   try {
-    const result = await tokenValidator(bearerToken);
+    const result = await tokenService.validate(bearerToken);
     req.user = { ...result };
     next();
   } catch (e) {
@@ -66,7 +60,7 @@ const resellerUsecase = require("./usecases/reseller")({
   errorFactory: Boom,
   passwordEncrypter: bcrypt.hash,
   passwordComparator: bcrypt.compare,
-  tokenGenerator: tokenGenerator,
+  tokenGenerator: tokenService.generate,
   cashbackService
 });
 

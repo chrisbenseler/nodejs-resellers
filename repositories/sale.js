@@ -52,7 +52,6 @@ module.exports = ({ Entity }) => {
       },
     });
 
-
     return items.map((item) => buildPlainEntity(item));
   };
 
