@@ -1,11 +1,14 @@
-module.exports = ({ }) => {
-
-    const create = async({ name, cpf, email }) => {
-
-    }
-
+module.exports = ({}) => {
+  const create = async ({ name, cpf, email, password }) => {
     return {
-        create
-    }
+      id: 1,
+      name,
+      cpf,
+      email
+    };
+  };
 
-}
+  return {
+    create,
+  };
+};

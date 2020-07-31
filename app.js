@@ -1,4 +1,5 @@
 const Boom = require("@hapi/boom");
+const bcrypt = require("bcrypt");
 
 const validators = require("./services/validators");
 
@@ -8,6 +9,7 @@ const resellerUsecase = require("./usecases/reseller")({
   resellerRepository,
   validators,
   errorFactory: Boom,
+  passwordEncrypter: bcrypt.hash
 });
 
-resellerUsecase.create({});
+resellerUsecase.create({ name: "aaaa",  cpf: "sadsadsa", email: "teste@teste.com.br", password: "sadsad"})
