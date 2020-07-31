@@ -1,0 +1,248 @@
+{
+	"info": {
+		"_postman_id": "e65125c6-6686-40a4-bccc-0ddd88cca130",
+		"name": "Resellers",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth Sign Up",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nome\": \"Christian\",\n    \"email\": \"cbenseler@gmail.com\",\n    \"password\": \"senha123\",\n    \"cpf\": \"111.222.333-44\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth/signup",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth Sign In",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"cbenseler@gmail.com\",\n    \"password\": \"senha123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth/signin",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New sale",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"cbenseler@gmail.com\",\n    \"password\": \"senha123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/resellers/sales",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"resellers",
+						"sales"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List reseller sales",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"cbenseler@gmail.com\",\n    \"password\": \"senha123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/resellers/sales",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"resellers",
+						"sales"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get resellers amount of cashback",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"cbenseler@gmail.com\",\n    \"password\": \"senha123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/resellers/sales",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"resellers",
+						"sales"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth profile",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"cbenseler@gmail.com\",\n    \"password\": \"senha123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth/profile",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Health check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/healthcheck",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"healthcheck"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "External Cashback API",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMjQwOThlZDI0YzIyMzUyYmM0ZDIyNiIsImlhdCI6MTU5NjE5ODY5Nn0.FqmWU-jwAt77HLf8ozMVAhONHl1Xe0e8RRvyQ4BNyh8",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "89149df4-f679-43ba-ab8b-df2ea6ec9d9a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "b537fc86-23df-450e-83bb-62186c921d7f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "1753768c-c611-447a-8d93-5b417bea87ff",
+			"key": "host",
+			"value": "http://localhost:3000"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
