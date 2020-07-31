@@ -19,6 +19,9 @@ const resellerUsecase = require("../usecases/reseller")({
   saleRepository: saleRepository,
   validators,
   errorFactory: Boom,
+  cashbackService: {
+    calculate: () => {}
+  }
 });
 
 describe("Create new sale use case", () => {

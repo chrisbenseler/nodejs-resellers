@@ -6,6 +6,8 @@ const SaleSchema = new Schema({
   value: { type: Number, required: true },
   createdAt: { type: Date, required: true },
   status: { type: String, enum: ['Aprovado', 'Em validação']},
+  cashback: { type: Number },
+  cashbackRatio: { type: Number },
   resellerId: { type: mongoose.Schema.Types.ObjectId, required: true },
 });
 

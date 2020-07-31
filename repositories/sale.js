@@ -1,3 +1,5 @@
+const moment = require("moment");
+
 const buildPlainEntity = (dbEntity) => {
   return {
     id: dbEntity.id,
@@ -5,7 +7,9 @@ const buildPlainEntity = (dbEntity) => {
     value: dbEntity.value,
     createdAt: dbEntity.createdAt,
     resellerId: dbEntity.resellerId,
-    status: dbEntity. status
+    cashback: dbEntity.cashback,
+    cashbackRatio: dbEntity.cashbackRatio,
+    status: dbEntity.status,
   };
 };
 
@@ -25,33 +29,37 @@ module.exports = ({ Entity }) => {
     }
   };
 
-  /*
-  const findByEmailAndPassword = async ({ email, password }) => {
-    const result = await Entity.findOne({ email, password });
-    if (!result) return null;
-    return buildPlainEntity(result);
+  const findByResellerId = async (resellerId) => {
+    const items = await Entity.find({ resellerId });
+    return items.map((item) => buildPlainEntity(item));
   };
 
-  const getByEmail = async (email) => {
-    const result = await Entity.findOne({ email });
-    if (!result) return null;
-    return buildPlainEntity(result);
+  const updateCashback = async ({ id, cashback, cashbackRatio }) => {
+    await Entity.updateOne({ _id: id }, { cashback, cashbackRatio });
   };
 
-  const getById = async (id) => {
-    const result = await Entity.findById(id);
-    if (!result) return null;
-    return buildPlainEntity(result);
-  };
+  const findApprovedByPeriod = async ({ resellerId, month, year }) => {
+    const startOfMonth = moment().set({ month: month - 1, year }).startOf("month");
+    const endOfMonth = moment().set({ month: month - 1, year }).endOf("month");
 
-  const getPassword = async (id) => {
-    const result = await Entity.findById(id);
-    if (!result) return null;
-    return result.password;
+
+    const items = await Entity.find({
+      resellerId,
+      status: "Aprovado",
+      createdAt: {
+        $gte: startOfMonth,
+        $lt: endOfMonth,
+      },
+    });
+
+
+    return items.map((item) => buildPlainEntity(item));
   };
-  */
 
   return {
     create,
+    findByResellerId,
+    updateCashback,
+    findApprovedByPeriod,
   };
 };

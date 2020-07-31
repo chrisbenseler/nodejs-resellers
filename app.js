@@ -18,6 +18,7 @@ app.use(bodyParser.json({ type: "application/json" }));
 
 const validators = require("./services/validators");
 
+
 const ResellerEntity = require("./entities/reseller");
 const resellerRepository = require("./repositories/reseller")({
   Entity: ResellerEntity,
@@ -26,6 +27,8 @@ const SaleEntity = require("./entities/sale");
 const saleRepository = require("./repositories/sale")({
   Entity: SaleEntity,
 });
+
+const cashbackService = require("./services/cashback")({ saleRepository })
 
 const tokenGenerator = async (payload) => {
   return await jwt.sign(payload, PRIVATEKEY);
@@ -60,6 +63,7 @@ const resellerUsecase = require("./usecases/reseller")({
   passwordEncrypter: bcrypt.hash,
   passwordComparator: bcrypt.compare,
   tokenGenerator: tokenGenerator,
+  cashbackService
 });
 
 app.get("/healthcheck", (req, res) => {
@@ -100,15 +104,30 @@ app.get("/auth/profile", isAuthenticated, async (req, res, next) => {
 });
 
 app.post("/resellers/sales", isAuthenticated, async (req, res, next) => {
-    console.log("[Controller] reseller new sale");
-    const { code, value } = req.body;
-    try {
-      const result = await resellerUsecase.itemSold({ resellerId: req.user.id, code, value });
-      res.json(result);
-    } catch (e) {
-      next(e);
-    }
-  });
+  console.log("[Controller] reseller new sale");
+  const { code, value } = req.body;
+  try {
+    const result = await resellerUsecase.itemSold({
+      resellerId: req.user.id,
+      code,
+      value,
+    });
+    res.json(result);
+  } catch (e) {
+    next(e);
+  }
+});
+
+app.get("/resellers/sales", isAuthenticated, async (req, res, next) => {
+  console.log("[Controller] reseller new sale");
+
+  try {
+    const result = await resellerUsecase.listSalesWithCashback(req.user.id);
+    res.json(result);
+  } catch (e) {
+    next(e);
+  }
+});
 
 //error handler
 app.use((err, req, res, next) => {

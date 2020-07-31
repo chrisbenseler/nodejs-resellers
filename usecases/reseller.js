@@ -6,6 +6,7 @@ module.exports = ({
   passwordEncrypter,
   passwordComparator,
   tokenGenerator,
+  cashbackService
 }) => {
   const create = async ({ name, cpf, email, password }) => {
     if (!validators.isValidEmail(email)) {
@@ -68,8 +69,8 @@ module.exports = ({
       throw errorFactory.badData("Dados da compra inválidos");
     }
 
-    if(!validators.saleValue(value)) {
-        throw errorFactory.badData("Valor inválido da transação");
+    if (!validators.saleValue(value)) {
+      throw errorFactory.badData("Valor inválido da transação");
     }
 
     const reseller = await resellerRepository.getById(resellerId);
@@ -86,13 +87,27 @@ module.exports = ({
       status,
     });
 
+    //calculateCashback é chamado assíncronamente, pois poderia ser um batch que roda de tempos em tempos
+    cashbackService.calculate({
+      resellerId: reseller.id,
+      month: result.createdAt.getMonth() + 1,
+      year: result.createdAt.getFullYear(),
+    });
+
     return result;
   };
+
+  const listSalesWithCashback = async (id) => {
+    return await saleRepository.findByResellerId(id);
+  };
+
+  
 
   return {
     create,
     authenticate,
     profile,
     itemSold,
+    listSalesWithCashback,
   };
 };
