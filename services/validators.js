@@ -1,3 +1,4 @@
+
 const validators = {
   isValidEmail: (str) => true,
   isBlank: (str) => {
@@ -14,6 +15,15 @@ const validators = {
       if(!/\S/.test(str)) return false;
 
       if(str.trim().length < 4) return false;
+
+      return true;
+  },
+  saleValue: value => {
+      if(isNaN(value)) return false;
+
+      if(value < 0) {
+          return false;
+      }
 
       return true;
   }

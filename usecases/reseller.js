@@ -68,6 +68,10 @@ module.exports = ({
       throw errorFactory.badData("Dados da compra inválidos");
     }
 
+    if(!validators.saleValue(value)) {
+        throw errorFactory.badData("Valor inválido da transação");
+    }
+
     const reseller = await resellerRepository.getById(resellerId);
     if (!reseller) {
       throw errorFactory.badData("Revendedor não encontrado");

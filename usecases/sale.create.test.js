@@ -57,4 +57,14 @@ describe("Create new sale use case", () => {
     expect(result.resellerId).toBe(payload.resellerId);
     expect(result.status).toBe("Aprovado");
   });
+
+  test("validates value", async () => {
+    const payload = {
+      resellerId: mongoose.Types.ObjectId(),
+      code: "randomcode",
+      value: -10,
+    };
+    await expect(resellerUsecase.itemSold(payload)).rejects.toThrow("Valor inválido da transação");
+  });
+
 });

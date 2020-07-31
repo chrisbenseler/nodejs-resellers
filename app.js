@@ -22,6 +22,10 @@ const ResellerEntity = require("./entities/reseller");
 const resellerRepository = require("./repositories/reseller")({
   Entity: ResellerEntity,
 });
+const SaleEntity = require("./entities/sale");
+const saleRepository = require("./repositories/sale")({
+  Entity: SaleEntity,
+});
 
 const tokenGenerator = async (payload) => {
   return await jwt.sign(payload, PRIVATEKEY);
@@ -50,6 +54,7 @@ const isAuthenticated = async (req, res, next) => {
 
 const resellerUsecase = require("./usecases/reseller")({
   resellerRepository,
+  saleRepository,
   validators,
   errorFactory: Boom,
   passwordEncrypter: bcrypt.hash,
@@ -93,6 +98,17 @@ app.get("/auth/profile", isAuthenticated, async (req, res, next) => {
     next(e);
   }
 });
+
+app.post("/resellers/sales", isAuthenticated, async (req, res, next) => {
+    console.log("[Controller] reseller new sale");
+    const { code, value } = req.body;
+    try {
+      const result = await resellerUsecase.itemSold({ resellerId: req.user.id, code, value });
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  });
 
 //error handler
 app.use((err, req, res, next) => {
