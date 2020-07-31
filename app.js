@@ -7,23 +7,28 @@ const axios = require("axios");
 const express = require("express");
 const bodyParser = require("body-parser");
 
-require('dotenv').config(); //dev environment
+require("dotenv").config();
 
-const DBHOST = process.env.DBHOST;
-const PORT = process.env.PORT;
-const PRIVATEKEY = process.env.PRIVATEKEY;
+const DBHOST = process.env.DBHOST || "mongodb://localhost/resellers_dev";
+const PORT = process.env.PORT || 3000;
+const PRIVATEKEY = process.env.PRIVATEKEY || "anything";
 
 mongoose.connect(DBHOST, { useNewUrlParser: true });
-
-const app = express();
-
-app.use(bodyParser.json({ type: "application/json" }));
+mongoose.connection.on("connected", () => {
+  console.log(`Reseller app connected to database`)
+})
+mongoose.connection.on("error", (error) => {
+  console.error(`Reseller app could not connect to database`, error);
+  process.exit(error)
+})
 
 const controllers = require("./controllers");
 
 const validators = require("./services/validators");
-const tokenService = require("./services/token")({ tokenService: jwt, key: PRIVATEKEY });
-
+const tokenService = require("./services/token")({
+  tokenService: jwt,
+  key: PRIVATEKEY,
+});
 
 const ResellerEntity = require("./entities/reseller");
 const resellerRepository = require("./repositories/reseller")({
@@ -34,8 +39,10 @@ const saleRepository = require("./repositories/sale")({
   Entity: SaleEntity,
 });
 
-const cashbackService = require("./services/cashback")({ saleRepository, httpClient: axios });
-
+const cashbackService = require("./services/cashback")({
+  saleRepository,
+  httpClient: axios,
+});
 
 const isAuthenticated = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -63,11 +70,15 @@ const resellerUsecase = require("./usecases/reseller")({
   passwordEncrypter: bcrypt.hash,
   passwordComparator: bcrypt.compare,
   tokenGenerator: tokenService.generate,
-  cashbackService
+  cashbackService,
 });
 
+const app = express();
 
-controllers({ app, resellerUsecase, isAuthenticated })
+app.use(bodyParser.json({ type: "application/json" }));
 
+controllers({ app, resellerUsecase, isAuthenticated });
 
-app.listen(PORT, () => console.log(`Reseller app listening at http://localhost:${PORT}`));
+app.listen(PORT, () =>
+  console.log(`Reseller app listening at http://localhost:${PORT}`)
+);
