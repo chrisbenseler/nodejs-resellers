@@ -7,9 +7,11 @@ const axios = require("axios");
 const express = require("express");
 const bodyParser = require("body-parser");
 
-const DBHOST = "mongodb://localhost/resellers_dev";
-const PORT = 3000;
-const PRIVATEKEY = "randomkeyforjsonwebtoklen";
+require('dotenv').config(); //dev environment
+
+const DBHOST = process.env.DBHOST;
+const PORT = process.env.PORT;
+const PRIVATEKEY = process.env.PRIVATEKEY;
 
 mongoose.connect(DBHOST, { useNewUrlParser: true });
 
@@ -68,4 +70,4 @@ const resellerUsecase = require("./usecases/reseller")({
 controllers({ app, resellerUsecase, isAuthenticated })
 
 
-app.listen(PORT);
+app.listen(PORT, () => console.log(`Reseller app listening at http://localhost:${PORT}`));
