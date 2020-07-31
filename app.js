@@ -1,5 +1,7 @@
 const Boom = require("@hapi/boom");
 const bcrypt = require("bcrypt");
+const mongoose = require('mongoose');
+
 
 const validators = require("./services/validators");
 

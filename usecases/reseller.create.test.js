@@ -1,15 +1,25 @@
 const Boom = require("@hapi/boom");
+const dbHandler = require("../tests/db-handler");
+
 const validators = require("../services/validators");
-const resellerRepository = require("../repositories/reseller")({});
+
+const ResellerEntity = require("../entities/reseller");
+
+const resellerRepository = require("../repositories/reseller")({ Entity: ResellerEntity });
 
 const resellerUsecase = require("../usecases/reseller")({
   resellerRepository,
   validators,
   errorFactory: Boom,
-  passwordEncrypter: str => str
+  passwordEncrypter: (str) => str,
 });
 
 describe("Create reseller use case", () => {
+  
+  beforeAll(async () => await dbHandler.connect());
+  afterEach(async () => await dbHandler.clearDatabase());
+  afterAll(async () => await dbHandler.closeDatabase());
+
   test("validates blank name", async () => {
     await expect(
       resellerUsecase.create({
@@ -27,18 +37,18 @@ describe("Create reseller use case", () => {
     ).rejects.toThrow(Boom.badData("Nome em branco"));
   });
 
- 
   test("creates user", async () => {
     const payload = {
       name: "random name",
       cpf: "123456789-00",
       email: "teste@teste.com",
-      password: "testeteste"
+      password: "testeteste",
     };
-    const result = await resellerUsecase.create(payload);
 
+    const result = await resellerUsecase.create(payload);
     expect(result.name).toBe(payload.name);
     expect(result).toHaveProperty("id");
+    expect(result).not.toHaveProperty("_id"); //no reference to db internals
   });
 
   test("invalid password", async () => {
@@ -46,7 +56,7 @@ describe("Create reseller use case", () => {
       name: "random name",
       cpf: "123456789-00",
       email: "teste@teste.com",
-      password: " "
+      password: " ",
     };
     await expect(
       resellerUsecase.create({
@@ -54,7 +64,8 @@ describe("Create reseller use case", () => {
         cpf: "123456789-00",
         email: "teste@teste.com",
       })
-    ).rejects.toThrow(Boom.badData("Senha informada não atende os requisitos de segurança"));
+    ).rejects.toThrow(
+      Boom.badData("Senha informada não atende os requisitos de segurança")
+    );
   });
-
 });

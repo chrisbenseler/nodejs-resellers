@@ -10,9 +10,14 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/boom": "^9.1.0",
-    "bcrypt": "^5.0.0"
+    "bcrypt": "^5.0.0",
+    "mongoose": "^5.9.26"
   },
   "devDependencies": {
-    "jest": "^26.2.1"
+    "jest": "^26.2.1",
+    "mongodb-memory-server": "^6.6.3"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

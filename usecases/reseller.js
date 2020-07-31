@@ -20,8 +20,6 @@ module.exports = ({
       );
     }
 
-
-
     return await resellerRepository.create({ name, cpf, email, password: await passwordEncrypter(password, 10) });
   };
 
