@@ -17,7 +17,16 @@ module.exports = ({ Entity }) => {
     }
   };
 
+  const findByEmailAndPassword = async ({ email, password }) => {
+    const result = await Entity.findOne({ email, password });
+
+    if (!result) return null;
+
+    return buildPlainEntity(result);
+  };
+
   return {
     create,
+    findByEmailAndPassword,
   };
 };

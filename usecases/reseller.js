@@ -3,6 +3,7 @@ module.exports = ({
   validators,
   errorFactory,
   passwordEncrypter,
+  tokenGenerator
 }) => {
   const create = async ({ name, cpf, email, password }) => {
     if (!validators.isValidEmail(email)) {
@@ -20,10 +21,35 @@ module.exports = ({
       );
     }
 
-    return await resellerRepository.create({ name, cpf, email, password: await passwordEncrypter(password, 10) });
+    return await resellerRepository.create({
+      name,
+      cpf,
+      email,
+      password: await passwordEncrypter(password, 10),
+    });
+  };
+
+  const authenticate = async ({ email, password }) => {
+    if (validators.isBlank(email) || validators.isBlank(password)) {
+      throw errorFactory.badData("Por favor informe as credenciais");
+    }
+
+    const result = await resellerRepository.findByEmailAndPassword({
+      email,
+      password: await passwordEncrypter(password, 10),
+    });
+
+    if(!result) {
+        throw errorFactory.unauthorized("Credenciais inválidas")
+    }
+
+    return {
+      token: await tokenGenerator({ id: result.id }),
+    };
   };
 
   return {
     create,
+    authenticate,
   };
 };
