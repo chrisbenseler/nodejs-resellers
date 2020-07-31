@@ -1,5 +1,6 @@
 module.exports = ({
   resellerRepository,
+  saleRepository,
   validators,
   errorFactory,
   passwordEncrypter,
@@ -59,12 +60,35 @@ module.exports = ({
   };
 
   const profile = async (id) => {
-      return await resellerRepository.getById(id);
+    return await resellerRepository.getById(id);
+  };
+
+  const itemSold = async ({ resellerId, code, value }) => {
+    if (validators.isBlank(code) || validators.isBlank(value)) {
+      throw errorFactory.badData("Dados da compra inválidos");
+    }
+
+    const reseller = await resellerRepository.getById(resellerId);
+    if (!reseller) {
+      throw errorFactory.badData("Revendedor não encontrado");
+    }
+
+    const status =
+      reseller.cpf === "153.509.460-56" ? "Aprovado" : "Em validação";
+    const result = await saleRepository.create({
+      code,
+      value,
+      resellerId,
+      status,
+    });
+
+    return result;
   };
 
   return {
     create,
     authenticate,
-    profile
+    profile,
+    itemSold,
   };
 };
