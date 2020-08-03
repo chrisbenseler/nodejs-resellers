@@ -23,8 +23,9 @@ npm run start
 First, create a reseller and then sign in using its credentials (email and password)
 
 ### Check if reseller is authenticated
-The sign in endpoint returns a token. This should be used as a bearer token.
-Hit the /auth/profile and a status 200 response with the user data will be returned
+The sign in endpoint returns a token which expires in 24 hours. This should be used as a bearer token.
+Hit the /auth/profile and a status 200 response with the user data will be returned.
+There is no revalidation token flow yet.
 
 ### Sale
 Use the new sale endpoint providing both code and value from the sale. There is no need to provide the user's CPF because this endpoints requires authentication.
