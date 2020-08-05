@@ -1,7 +1,7 @@
 # Resellers Cashback
 
 ### Dependencies
-- NodeJS > 10
+- NodeJS > 12
 - MongoDB > 4
 
 ## Installation
