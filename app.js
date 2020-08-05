@@ -3,9 +3,11 @@ const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
-
+const { Worker } = require("worker_threads");
 const express = require("express");
 const bodyParser = require("body-parser");
+
+const cashbackWorker = new Worker("./workers/cashback.js");
 
 require("dotenv").config();
 
@@ -15,12 +17,12 @@ const PRIVATEKEY = process.env.PRIVATEKEY || "anything";
 
 mongoose.connect(DBHOST, { useNewUrlParser: true });
 mongoose.connection.on("connected", () => {
-  console.log(`Reseller app connected to database`)
-})
+  console.log(`Reseller app connected to database`);
+});
 mongoose.connection.on("error", (error) => {
   console.error(`Reseller app could not connect to database`, error);
-  process.exit(error)
-})
+  process.exit(error);
+});
 
 const controllers = require("./controllers");
 
@@ -42,6 +44,7 @@ const saleRepository = require("./repositories/sale")({
 const cashbackService = require("./services/cashback")({
   saleRepository,
   httpClient: axios,
+  worker: cashbackWorker,
 });
 
 const isAuthenticated = async (req, res, next) => {
